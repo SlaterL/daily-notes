@@ -7,6 +7,9 @@
 {{- else }}
 {{- range .Issues }}
 [**{{ .Key }}**]({{ .URL }}) ({{ .Status }}) — {{ .Summary }}
+{{- range .Components }}
+* [[docs/{{ . }}/README]]
+{{- end }}
 - [ ] ...
 
 {{- end }}

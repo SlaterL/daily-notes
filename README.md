@@ -22,19 +22,19 @@ Exits without modifying anything if the daily note already exists
 
 1. Build or install the binary:
 
-```shell
+```bash
 git clone https://github.com/SlaterL/daily-notes.git
 cd daily-notes
 go build ./daily-notes
 ```
 OR
-```shell
+```bash
 go install github.com/SlaterL/daily-notes
 ```
 
 2. Run the tool:
 
-```shell
+```bash
 daily-notes
 ```
 
@@ -55,6 +55,7 @@ jira:
     email: "you@company.com"
     token: "<INSERT TOKEN>"
     project_filter: ["CORE", "PROJ"]
+readme: false
 ```
 
 Notes:
@@ -87,3 +88,47 @@ A successfully created note should look something like this:
 ## 📝 Notes
 
 ```
+
+## README config value
+
+The `readme` config value refers to an option that can automatically embed a link to relevant readmes, if they exist in your vault. This can be done using symlinks to each of the readme's from your cloned repos. Here's a decent command for creating the symlinks:
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+SRC="$HOME/Your/Code/Path"
+DEST="$HOME/Your/Obsidian/vault/docs"
+
+mkdir -p "$DEST"
+
+find "$SRC" -type d -name ".git" | while read -r gitdir; do
+  repo_root="$(dirname "$gitdir")"
+  repo_name="$(basename "$repo_root")"
+  repo_dest="$DEST/$repo_name"
+
+  mkdir -p "$repo_dest"
+
+  find "$repo_root" \( -type f -o -type l \) \
+    \( -name "*.md" -o -name "*.swagger.json" \) \
+    -not -path "*/vendor/*" |
+  while read -r file; do
+    rel="${file#$repo_root/}"
+
+    flat_name="$(echo "$rel" | sed 's|/|-|g')"
+    target="$repo_dest/$flat_name"
+
+    if [[ -e "$target" ]]; then
+      base="$(basename "$rel")"
+      dir="$(dirname "$rel" | sed 's|/|-|g')"
+      flat_name="${dir}-${base}"
+      target="$repo_dest/$flat_name"
+    fi
+
+    ln -sfn "$file" "$target"
+  done
+done
+```
+
+The program assumes all docs are in a `/docs` dir in your vault and will attempt to use the list of Components on your jira Issue when linking.
+There's no magic to this, it will assume a readme exists for any component listed and may result in broken links.

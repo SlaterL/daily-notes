@@ -8,10 +8,11 @@ import (
 )
 
 type Issue struct {
-	Key     string
-	Summary string
-	URL     string
-	Status  string
+	Key        string
+	Summary    string
+	URL        string
+	Status     string
+	Components []string
 }
 
 type searchResponse struct {
@@ -22,6 +23,9 @@ type searchResponse struct {
 			Status  struct {
 				Name string `json:"name"`
 			} `json:"status"`
+			Components []struct {
+				Name string `json:"name"`
+			} `json:"components"`
 		} `json:"fields"`
 		Self string `json:"self"`
 	} `json:"issues"`
@@ -51,7 +55,7 @@ func (c *Client) SearchIssues() ([]Issue, error) {
 
 	q := req.URL.Query()
 	q.Set("jql", jql)
-	q.Set("fields", "summary,status")
+	q.Set("fields", "summary,status,components")
 	q.Set("maxResults", "50")
 	req.URL.RawQuery = q.Encode()
 
@@ -79,11 +83,18 @@ func (c *Client) SearchIssues() ([]Issue, error) {
 			continue
 		}
 
+		components := []string{}
+		if c.cfg.ReadmeLinks {
+			for _, comp := range i.Fields.Components {
+				components = append(components, comp.Name)
+			}
+		}
 		issues = append(issues, Issue{
-			Key:     i.Key,
-			Summary: i.Fields.Summary,
-			URL:     c.baseURL + "/browse/" + i.Key,
-			Status:  i.Fields.Status.Name,
+			Key:        i.Key,
+			Summary:    i.Fields.Summary,
+			URL:        c.baseURL + "/browse/" + i.Key,
+			Status:     i.Fields.Status.Name,
+			Components: components,
 		})
 	}
 

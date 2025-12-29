@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"time"
@@ -10,13 +11,20 @@ import (
 	"github.com/SlaterL/daily-notes/internal/notes"
 )
 
+var (
+	readmeLinks = flag.Bool("readme", false, "Indicates if links to readmes should be included with each jira issue that's found. You probably arent set up for this to be useful.")
+)
+
 func main() {
+	flag.Parse()
 	log.SetFlags(0)
 
 	cfg, err := config.Load()
 	if err != nil {
 		log.Fatalf("config error: %v", err)
 	}
+
+	cfg.ReadmeLinks = *readmeLinks || cfg.ReadmeLinks
 
 	today := time.Now().Local().Format("2006-01-02")
 
