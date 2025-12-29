@@ -13,12 +13,12 @@ type Config struct {
 	DailyNotesSubdir string `yaml:"daily_notes_subdir"`
 
 	Jira  JiraConfig `yaml:"jira"`
-	Token string     `yaml:"token"`
 }
 
 type JiraConfig struct {
 	BaseURL       string   `yaml:"base_url"`
 	Email         string   `yaml:"email"`
+	Token string     `yaml:"token"`
 	ProjectFilter []string `yaml:"project_filter"`
 }
 

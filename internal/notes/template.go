@@ -1,31 +1,35 @@
 package notes
 
 import (
-	"strings"
+	"bytes"
+	_ "embed"
+	"text/template"
 
-	"daily-notes/internal/jira"
+	"github.com/SlaterL/daily-notes/internal/jira"
 )
 
-func Render(date string, issues []jira.Issue) string {
-	var b strings.Builder
+//go:embed templates/note.tmpl
+var dailyTemplate string
 
-	b.WriteString("## 🏆 Major Accomplishments\n")
-	b.WriteString("- \n\n")
-	b.WriteString("## 📋 Jira Tasks\n")
+type DailyNoteData struct {
+	Date   string
+	Issues []jira.Issue
+}
 
-	if len(issues) == 0 {
-		b.WriteString("\n")
-	} else {
-		for _, i := range issues {
-			b.WriteString("[**" + i.Key + "**](" + i.URL + ") (" + i.Status + ") — " + i.Summary + "\n")
-			b.WriteString("- [ ] \n\n")
-		}
+func Render(date string, issues []jira.Issue) (string, error) {
+	tmpl, err := template.New("daily").Parse(dailyTemplate)
+	if err != nil {
+		return "", err
 	}
 
-	b.WriteString("## 📋 Other Tasks\n")
-	b.WriteString("- [ ] Review MRs\n\n")
+	var buf bytes.Buffer
+	err = tmpl.Execute(&buf, DailyNoteData{
+		Date:   date,
+		Issues: issues,
+	})
+	if err != nil {
+		return "", err
+	}
 
-	b.WriteString("## 📝 Notes\n\n")
-
-	return b.String()
+	return buf.String(), nil
 }

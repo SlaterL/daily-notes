@@ -4,7 +4,7 @@ import (
 	"encoding/base64"
 	"net/http"
 
-	"daily-notes/internal/config"
+	"github.com/SlaterL/daily-notes/internal/config"
 )
 
 type Client struct {
@@ -15,7 +15,7 @@ type Client struct {
 }
 
 func NewClient(cfg *config.Config) (*Client, error) {
-	auth := cfg.Jira.Email + ":" + cfg.Token
+	auth := cfg.Jira.Email + ":" + cfg.Jira.Token
 	encoded := base64.StdEncoding.EncodeToString([]byte(auth))
 
 	return &Client{

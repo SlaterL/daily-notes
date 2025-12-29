@@ -5,9 +5,9 @@ import (
 	"log"
 	"time"
 
-	"daily-notes/internal/config"
-	"daily-notes/internal/jira"
-	"daily-notes/internal/notes"
+	"github.com/SlaterL/daily-notes/internal/config"
+	"github.com/SlaterL/daily-notes/internal/jira"
+	"github.com/SlaterL/daily-notes/internal/notes"
 )
 
 func main() {
@@ -40,7 +40,10 @@ func main() {
 		log.Fatalf("jira search error: %v", err)
 	}
 
-	content := notes.Render(today, issues)
+	content, err := notes.Render(today, issues)
+	if err != nil {
+		log.Fatalf("failed to build template: %v", err)
+	}
 
 	if err := notes.Write(path, content); err != nil {
 		log.Fatalf("write error: %v", err)

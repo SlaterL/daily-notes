@@ -1,4 +1,4 @@
-module daily-notes
+module github.com/SlaterL/daily-notes
 
 go 1.25.5
 

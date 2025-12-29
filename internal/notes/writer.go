@@ -4,7 +4,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"daily-notes/internal/config"
+	"github.com/SlaterL/daily-notes/internal/config"
 )
 
 func DailyNotePath(cfg *config.Config, date string) (string, error) {
