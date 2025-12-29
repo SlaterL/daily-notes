@@ -67,3 +67,23 @@ Notes:
 * If the daily note already exists → no changes are made
 * If there are no active Jira issues → the note is still created with an empty Jira section
 * Any error (config, Jira API, disk write) causes a clear, fatal failure
+
+A successfully created note should look something like this:
+```md
+# 2026-01-13
+## 🏆 Major Accomplishments
+- 
+
+## 📋 Jira Tasks
+[**CORE-1571**](https://yourcompany.atlassian.net/browse/CORE-1571) (In Progress) — Update auth flow to V2
+- [ ] ...
+[**CORE-1573**](https://yourcompany.atlassian.net/browse/CORE-1573) (Ready to Merge) — Rewrite payments service in Rust
+- [ ] ...
+
+
+## 📋 Other Tasks
+- [ ] Review MRs
+
+## 📝 Notes
+
+```
