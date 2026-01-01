@@ -25,3 +25,16 @@ func Exists(path string) bool {
 func Write(path, content string) error {
 	return os.WriteFile(path, []byte(content), 0o644)
 }
+
+func Append(path string, content []byte) error {
+	f, err := os.OpenFile(path, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	if _, err := f.Write(content); err != nil {
+		return err
+	}
+	return nil
+}

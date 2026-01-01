@@ -34,11 +34,49 @@ go install github.com/SlaterL/daily-notes
 
 2. Run the tool:
 
+Create your daily note.
 ```bash
-daily-notes
+daily-notes start
 ```
 
-On success, a new daily note is created. If the note already exists, the tool exits cleanly without overwriting it.
+Manually add a commit message (this can normally be done via a post-commit hook using the script below).
+```bash
+daily-notes commit <repo> <commit message>
+```
+
+## Post-commit script
+
+Here is a working post-commit script to append all commits to make to the bottom of your daily note (located at `~/.githooks/post-commit`):
+```bash
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+if git rev-parse -q --verify MERGE_HEAD >/dev/null; then
+exit 0
+fi
+
+# --- config ---
+NOTES_DIR="/ABSOLUTE/PATH/TO/YOUR/OBSIDIAN/VAULT"
+DATE="$(date +%Y-%m-%d)"
+NOTE_FILE="$NOTES_DIR/$DATE.md"
+
+# --- git info ---
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+REPO_NAME="$(basename "$REPO_ROOT")"
+
+COMMIT_MSG="$(git log -1 --pretty=%B | tr '\n' ' ')"
+[[ "$COMMIT_MSG" == fixup!* ]] && exit 0
+[[ "$COMMIT_MSG" == squash!* ]] && exit 0
+
+# --- run daily-notes ---
+daily-notes commit "$REPO_NAME" "$COMMIT_MSG"
+```
+
+Make sure to enable it:
+```bash
+git config --global core.hooksPath ~/.githooks
+```
 
 ## Configuration
 
@@ -56,6 +94,7 @@ jira:
     token: "<INSERT TOKEN>"
     project_filter: ["CORE", "PROJ"]
 readme: false
+exclude_commits: ["fixup!"]
 ```
 
 Notes:

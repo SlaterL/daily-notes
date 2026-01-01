@@ -12,8 +12,9 @@ type Config struct {
 	VaultPath        string `yaml:"vault_path"`
 	DailyNotesSubdir string `yaml:"daily_notes_subdir"`
 
-	Jira        JiraConfig `yaml:"jira"`
-	ReadmeLinks bool       `yaml:"readme"`
+	Jira           JiraConfig `yaml:"jira"`
+	ReadmeLinks    bool       `yaml:"readme"`
+	ExcludeCommits []string   `yaml:"exclude_commits"`
 }
 
 type JiraConfig struct {
@@ -51,8 +52,12 @@ func Load() (*Config, error) {
 		return nil, errors.New("jira.base_url and jira.email are required")
 	}
 
-	if os.Getenv("JIRA_API_TOKEN") == "" {
+	if cfg.Jira.Token == "" {
 		return nil, errors.New("JIRA_API_TOKEN is not set")
+	}
+
+	if cfg.ExcludeCommits == nil {
+		cfg.ExcludeCommits = []string{}
 	}
 
 	return &cfg, nil

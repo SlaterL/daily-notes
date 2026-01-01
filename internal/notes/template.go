@@ -3,6 +3,7 @@ package notes
 import (
 	"bytes"
 	_ "embed"
+	"fmt"
 	"text/template"
 
 	"github.com/SlaterL/daily-notes/internal/jira"
@@ -16,7 +17,7 @@ type DailyNoteData struct {
 	Issues []jira.Issue
 }
 
-func Render(date string, issues []jira.Issue) (string, error) {
+func RenderBaseNote(date string, issues []jira.Issue) (string, error) {
 	tmpl, err := template.New("daily").Parse(dailyTemplate)
 	if err != nil {
 		return "", err
@@ -32,4 +33,8 @@ func Render(date string, issues []jira.Issue) (string, error) {
 	}
 
 	return buf.String(), nil
+}
+
+func RenderAppendCommit(repo, commitMsg string) string {
+	return fmt.Sprintf("* (%s): %s\n", repo, commitMsg)
 }
