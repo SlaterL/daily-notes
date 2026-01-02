@@ -15,6 +15,7 @@ type Config struct {
 	Jira           JiraConfig `yaml:"jira"`
 	ReadmeLinks    bool       `yaml:"readme"`
 	ExcludeCommits []string   `yaml:"exclude_commits"`
+	OllamaModel    string     `yaml:"model"`
 }
 
 type JiraConfig struct {
@@ -58,6 +59,10 @@ func Load() (*Config, error) {
 
 	if cfg.ExcludeCommits == nil {
 		cfg.ExcludeCommits = []string{}
+	}
+
+	if cfg.OllamaModel == "" {
+		cfg.OllamaModel = "nemotron-3-nano:30b"
 	}
 
 	return &cfg, nil

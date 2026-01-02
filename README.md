@@ -36,12 +36,17 @@ go install github.com/SlaterL/daily-notes
 
 Create your daily note.
 ```bash
-daily-notes start
+daily-notes --cmd start
 ```
 
 Manually add a commit message (this can normally be done via a post-commit hook using the script below).
 ```bash
-daily-notes commit <repo> <commit message>
+daily-notes --cmd commit --repo <repo> --msg <commit message>
+```
+
+Create a new summary note based on today's note.
+```bash
+daily-notes --cmd sum
 ```
 
 ## Post-commit script
@@ -70,7 +75,7 @@ COMMIT_MSG="$(git log -1 --pretty=%B | tr '\n' ' ')"
 [[ "$COMMIT_MSG" == squash!* ]] && exit 0
 
 # --- run daily-notes ---
-daily-notes commit "$REPO_NAME" "$COMMIT_MSG"
+daily-notes --cmd commit --repo "$REPO_NAME" --msg "$COMMIT_MSG"
 ```
 
 Make sure to enable it:
@@ -95,6 +100,7 @@ jira:
     project_filter: ["CORE", "PROJ"]
 readme: false
 exclude_commits: ["fixup!"]
+model: "nemotron-3-nano:30b"
 ```
 
 Notes:

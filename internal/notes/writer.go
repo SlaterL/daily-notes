@@ -17,6 +17,16 @@ func DailyNotePath(cfg *config.Config, date string) (string, error) {
 	return filepath.Join(dir, date+".md"), nil
 }
 
+func DailyNoteSummaryPath(cfg *config.Config, date string) (string, error) {
+	dir := filepath.Join(cfg.VaultPath, cfg.DailyNotesSubdir)
+
+	if err := os.MkdirAll(dir, 0o755); err != nil {
+		return "", err
+	}
+
+	return filepath.Join(dir, date+"_sum.md"), nil
+}
+
 func Exists(path string) bool {
 	_, err := os.Stat(path)
 	return err == nil
